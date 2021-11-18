@@ -21,18 +21,41 @@ func main() {
 	UserRepository := user.NewRepository(db)
 	UserService := user.NewService(UserRepository)
 
+	// input := user.LoginInput{
+	// 	Email:    "test1@email.com",
+	// 	Password: "testpass",
+	// }
+	// user, err := UserService.Login(input)
+
+	// if err != nil {
+	// 	fmt.Println("Terjadi Kesalahan")
+	// 	fmt.Println(err.Error())
+	// }
+
+	// fmt.Println(user.Email)
+	// fmt.Println(user.Name)
+
+	// userByEmail, err := UserRepository.FindByEmail("test1@email.com")
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// }
+	// if userByEmail.ID == 0 {
+	// 	fmt.Println(userByEmail.ID)
+	// } else {
+	// 	fmt.Println(userByEmail.Name)
+	// }
 	userHandler := handler.NewUserHandler(UserService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
-
+	api.POST("/sessions", userHandler.Login)
 	router.Run()
 }
 
-	//input dari User
-	//handler, mapping input user => struct input
-	//service : melakukan mapping dari struct input ke struct user
-	//repository
-	//db
+//input dari User
+//handler, mapping input user => struct input
+//service : melakukan mapping dari struct input ke struct user
+//repository
+//db
