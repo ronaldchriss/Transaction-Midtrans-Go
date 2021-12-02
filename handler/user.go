@@ -3,6 +3,7 @@ package handler
 import (
 	"bwa_go/helper"
 	"bwa_go/user"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -106,4 +107,42 @@ func (h *userHandler) CheckEmail(c *gin.Context) {
 	response := helper.JsonResponse(metamessage, http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 
+}
+
+func (h *userHandler) UploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.JsonResponse("Failed to upload avatar images", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	//Sementara Hardcode blm JWT
+	userID := 14
+
+	pathImages := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+
+	err = c.SaveUploadedFile(file, pathImages)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.JsonResponse("Failed to upload avatar images", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	_, err = h.userService.SaveAvatar(userID, pathImages)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.JsonResponse("Failed to upload avatar images", http.StatusBadRequest, "error", data)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	data := gin.H{"is_uploaded": true}
+	response := helper.JsonResponse("Success to upload avatar images", http.StatusOK, "success", data)
+
+	c.JSON(http.StatusOK, response)
 }
