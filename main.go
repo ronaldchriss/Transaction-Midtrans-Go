@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bwa_go/auth"
 	"bwa_go/handler"
 	"bwa_go/user"
 	"log"
@@ -20,31 +21,9 @@ func main() {
 
 	UserRepository := user.NewRepository(db)
 	UserService := user.NewService(UserRepository)
+	AuthService := auth.NewService()
 
-	// input := user.LoginInput{
-	// 	Email:    "test1@email.com",
-	// 	Password: "testpass",
-	// }
-	// user, err := UserService.Login(input)
-
-	// if err != nil {
-	// 	fmt.Println("Terjadi Kesalahan")
-	// 	fmt.Println(err.Error())
-	// }
-
-	// fmt.Println(user.Email)
-	// fmt.Println(user.Name)
-
-	// userByEmail, err := UserRepository.FindByEmail("test1@email.com")
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// }
-	// if userByEmail.ID == 0 {
-	// 	fmt.Println(userByEmail.ID)
-	// } else {
-	// 	fmt.Println(userByEmail.Name)
-	// }
-	userHandler := handler.NewUserHandler(UserService)
+	userHandler := handler.NewUserHandler(UserService, AuthService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
