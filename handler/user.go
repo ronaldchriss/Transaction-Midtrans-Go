@@ -135,8 +135,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	//Sementara Hardcode blm JWT
-	userID := 14
+	code := c.MustGet("codeUser").(user.User)
+	userID := code.ID
 
 	pathImages := fmt.Sprintf("images/%d-%s", userID, file.Filename)
 

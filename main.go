@@ -3,9 +3,13 @@ package main
 import (
 	"bwa_go/auth"
 	"bwa_go/handler"
+	"bwa_go/helper"
 	"bwa_go/user"
 	"log"
+	"net/http"
+	"strings"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -31,12 +35,49 @@ func main() {
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/emailcheckers", userHandler.CheckEmail)
-	api.POST("/avatar", userHandler.UploadAvatar)
+	api.POST("/avatar", authMiddleware(AuthService, UserService), userHandler.UploadAvatar)
 	router.Run()
 }
 
-//input dari User
-//handler, mapping input user => struct input
-//service : melakukan mapping dari struct input ke struct user
-//repository
-//db
+func authMiddleware(AuthService auth.Service, UserService user.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+
+		if !strings.Contains(authHeader, "Bareer") {
+			response := helper.JsonResponse("Unauthorize", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		//Bareer Token Header
+		tokenString := ""
+		codeToken := strings.Split(authHeader, " ")
+		if len(codeToken) == 2 {
+			tokenString = codeToken[1]
+		}
+
+		token, err := AuthService.ValidateToken(tokenString)
+		if err != nil {
+			response := helper.JsonResponse("Unauthorize", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+
+		claim, ok := token.Claims.(jwt.MapClaims)
+		if !ok || !token.Valid {
+			response := helper.JsonResponse("Unauthorize", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+
+		userID := int(claim["user_id"].(float64))
+		user, err := UserService.GetUserByID(userID)
+		if err != nil {
+			response := helper.JsonResponse("Unauthorize", http.StatusUnauthorized, "error", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+
+		c.Set("codeUser", user)
+
+	}
+}
