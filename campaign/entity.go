@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"bwa_go/user"
 	"time"
 )
 
@@ -18,13 +19,14 @@ type Campaign struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	CampaignImages []CampaignImage
+	User           user.User
 }
 
 type CampaignImage struct {
 	ID         int
 	CampaignID int
 	FileName   string
-	isPrimary  int
+	IsPrimary  int
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 }

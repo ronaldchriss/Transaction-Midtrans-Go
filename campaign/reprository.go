@@ -8,6 +8,7 @@ type Reprository interface {
 	Save(campaign Campaign) (Campaign, error)
 	FindAll() ([]Campaign, error)
 	FindByUserID(UserID int) ([]Campaign, error)
+	FindByID(ID int) (Campaign, error)
 }
 
 type reprository struct {
@@ -20,7 +21,7 @@ func NewReprository(db *gorm.DB) *reprository {
 
 func (r *reprository) FindAll() ([]Campaign, error) {
 	var Campaigns []Campaign
-	err := r.db.Preload("CampaignImages", "campaign_images.isPrimary = 1").Find(&Campaigns).Error
+	err := r.db.Preload("CampaignImages", "campaign_images.is_primary = 1").Find(&Campaigns).Error
 	if err != nil {
 		return Campaigns, err
 	}
@@ -29,7 +30,7 @@ func (r *reprository) FindAll() ([]Campaign, error) {
 
 func (r *reprository) FindByUserID(UserID int) ([]Campaign, error) {
 	var Campaigns []Campaign
-	err := r.db.Where("user_id = ?", UserID).Preload("CampaignImages", "campaign_images.isPrimary = 1").Find(&Campaigns).Error
+	err := r.db.Where("user_id = ?", UserID).Preload("CampaignImages", "campaign_images.is_primary = 1").Find(&Campaigns).Error
 	if err != nil {
 		return Campaigns, err
 	}
@@ -41,5 +42,17 @@ func (r *reprository) Save(campaign Campaign) (Campaign, error) {
 	if err != nil {
 		return campaign, err
 	}
+	return campaign, nil
+}
+
+func (r *reprository) FindByID(ID int) (Campaign, error) {
+	var campaign Campaign
+
+	err := r.db.Preload("User").Preload("CampaignImages").Where("id=?", ID).Find(&campaign).Error
+
+	if err != nil {
+		return campaign, err
+	}
+
 	return campaign, nil
 }
