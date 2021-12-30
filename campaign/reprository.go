@@ -9,6 +9,7 @@ type Reprository interface {
 	FindAll() ([]Campaign, error)
 	FindByUserID(UserID int) ([]Campaign, error)
 	FindByID(ID int) (Campaign, error)
+	Update(campaign Campaign) (Campaign, error)
 }
 
 type reprository struct {
@@ -54,5 +55,13 @@ func (r *reprository) FindByID(ID int) (Campaign, error) {
 		return campaign, err
 	}
 
+	return campaign, nil
+}
+
+func (r *reprository) Update(campaign Campaign) (Campaign, error) {
+	err := r.db.Save(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
 	return campaign, nil
 }
