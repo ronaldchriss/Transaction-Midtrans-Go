@@ -13,6 +13,7 @@ type Service interface {
 	GetCampaignByID(input GetCampaignDetailInput) (Campaign, error)
 	CreateCampaign(input CreateCampaignInput) (Campaign, error)
 	Update(inputID GetCampaignDetailInput, input CreateCampaignInput) (Campaign, error)
+	SaveImage(input CreateImageInput, file string) (CampaignImage, error)
 }
 
 type service struct {
@@ -91,4 +92,34 @@ func (s *service) Update(inputID GetCampaignDetailInput, input CreateCampaignInp
 	}
 
 	return updateCampaign, nil
+}
+
+func (s *service) SaveImage(input CreateImageInput, file string) (CampaignImage, error) {
+	campaign, err := s.reprository.FindByID(input.CampaignID)
+	if err != nil {
+		return CampaignImage{}, err
+	}
+
+	if campaign.UserID != input.User.ID {
+		return CampaignImage{}, errors.New("You dont have access to this campaign")
+	}
+
+	primary := 0
+	if input.IsPrimary {
+		primary = 1
+		_, err := s.reprository.MarkNonPrimary(input.CampaignID)
+		if err != nil {
+			return CampaignImage{}, err
+		}
+	}
+	campaignImage := CampaignImage{}
+	campaignImage.CampaignID = input.CampaignID
+	campaignImage.IsPrimary = primary
+	campaignImage.FileName = file
+
+	saveImage, err := s.reprository.CreateImage(campaignImage)
+	if err != nil {
+		return saveImage, err
+	}
+	return saveImage, nil
 }

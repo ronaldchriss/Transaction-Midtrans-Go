@@ -10,6 +10,8 @@ type Reprository interface {
 	FindByUserID(UserID int) ([]Campaign, error)
 	FindByID(ID int) (Campaign, error)
 	Update(campaign Campaign) (Campaign, error)
+	CreateImage(campaignImage CampaignImage) (CampaignImage, error)
+	MarkNonPrimary(campaignID int) (bool, error)
 }
 
 type reprository struct {
@@ -64,4 +66,20 @@ func (r *reprository) Update(campaign Campaign) (Campaign, error) {
 		return campaign, err
 	}
 	return campaign, nil
+}
+
+func (r *reprository) CreateImage(campaignImage CampaignImage) (CampaignImage, error) {
+	err := r.db.Create(&campaignImage).Error
+	if err != nil {
+		return campaignImage, err
+	}
+	return campaignImage, nil
+}
+
+func (r *reprository) MarkNonPrimary(campaignID int) (bool, error) {
+	err := r.db.Model(&CampaignImage{}).Where("campaign_id = ?", campaignID).Update("is_primary", false).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
