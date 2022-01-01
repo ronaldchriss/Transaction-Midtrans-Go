@@ -54,6 +54,7 @@ func main() {
 	api.POST("/campaign-images", authMiddleware(AuthService, UserService), campaignHandler.UploadImage)
 
 	api.GET("/campaigns/:id/transaction", authMiddleware(AuthService, UserService), transHandler.GetTransaction)
+	api.GET("/transaction", authMiddleware(AuthService, UserService), transHandler.GetTransactionByUser)
 	router.Run()
 }
 

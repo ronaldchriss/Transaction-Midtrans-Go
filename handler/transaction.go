@@ -40,3 +40,17 @@ func (h *TransactionHandler) GetTransaction(c *gin.Context) {
 	response := helper.JsonResponse("Transaction Detail", http.StatusOK, "success", transaction.FormatListTrans(trans))
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *TransactionHandler) GetTransactionByUser(c *gin.Context) {
+	code := c.MustGet("codeUser").(user.User)
+	UserID := code.ID
+
+	trans, err := h.service.GetByUserID(UserID)
+	if err != nil {
+		response := helper.JsonResponse("Error to Get Transaction", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.JsonResponse("User's Transaction ", http.StatusOK, "success", transaction.FormatListTransUser(trans))
+	c.JSON(http.StatusOK, response)
+}
