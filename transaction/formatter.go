@@ -80,3 +80,24 @@ func FormatListTransUser(transaction []Transaction) []TransUserFormatter {
 
 	return transUserFormatter
 }
+
+type SuccessFormat struct {
+	CampaignID int       `json: "campaign_id"`
+	UserID     int       `json: "user_id"`
+	Amount     int       `json : "amount"`
+	Code       string    `json: code`
+	PaymentURL string    `json: paymeny_url`
+	CreatedAt  time.Time `json : "cretaed_at"`
+}
+
+func SuccessFormatter(transaction Transaction) SuccessFormat {
+	SuccessTrans := SuccessFormat{}
+	SuccessTrans.CampaignID = transaction.CampaignID
+	SuccessTrans.UserID = transaction.UserID
+	SuccessTrans.Amount = transaction.Amount
+	SuccessTrans.CreatedAt = transaction.CreatedAt
+	SuccessTrans.Code = transaction.Code
+	SuccessTrans.PaymentURL = transaction.PaymentURL
+
+	return SuccessTrans
+}
