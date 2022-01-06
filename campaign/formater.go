@@ -45,18 +45,19 @@ func FormatCampaigns(campaigns []Campaign) []CampaignFormatter {
 }
 
 type CampaignDetailFotmatter struct {
-	ID            int                    `json: "id"`
-	Title         string                 `json : "title"`
-	ImageUrl      string                 `json : "image_url"`
-	ShortDesc     string                 `json : "short_desc"`
-	Desc          string                 `json : "desc"`
-	GoalAmount    int                    `json: "goal_amount"`
-	CurrentAmount int                    `json: "current_amount"`
-	Slug          string                 `json: "slug"`
-	UserID        int                    `json: "user_id"`
-	Perks         []string               `json: perks`
-	User          UserDetailFormatter    `json: user`
-	Images        []ImageDetailFormatter `json: images`
+	ID             int                    `json: "id"`
+	Title          string                 `json : "title"`
+	ImageUrl       string                 `json : "image_url"`
+	ShortDesc      string                 `json : "short_desc"`
+	Desc           string                 `json : "desc"`
+	GoalAmount     int                    `json: "goal_amount"`
+	CurrentAmount  int                    `json: "current_amount"`
+	Slug           string                 `json: "slug"`
+	UserID         int                    `json: "user_id"`
+	CampaignBacker int                    `json: "campaign_backer"`
+	Perks          []string               `json: perks`
+	User           UserDetailFormatter    `json: user`
+	Images         []ImageDetailFormatter `json: images`
 }
 
 type UserDetailFormatter struct {
@@ -78,6 +79,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFotmatter {
 	CampaignDetailFotmatter.Desc = campaign.Desc
 	CampaignDetailFotmatter.GoalAmount = campaign.GoalAmount
 	CampaignDetailFotmatter.CurrentAmount = campaign.CurrentAmount
+	CampaignDetailFotmatter.CampaignBacker = campaign.BackerCount
 	CampaignDetailFotmatter.Slug = campaign.Slug
 	CampaignDetailFotmatter.ImageUrl = ""
 

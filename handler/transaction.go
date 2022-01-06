@@ -84,3 +84,24 @@ func (h *TransactionHandler) CreateTrans(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *TransactionHandler) GetNotif(c *gin.Context) {
+	var input transaction.TransactionNotif
+
+	err := c.ShouldBindJSON(&input)
+
+	if err != nil {
+		response := helper.JsonResponse("Get Notification Failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	err = h.service.ProcessPayment(input)
+	if err != nil {
+		response := helper.JsonResponse("Get Notification Failed", http.StatusBadRequest, "error", nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	c.JSON(http.StatusOK, input)
+}

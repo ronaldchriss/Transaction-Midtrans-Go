@@ -4,6 +4,7 @@ import (
 	"bwa_go/campaign"
 	"bwa_go/payment"
 	"errors"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -18,6 +19,7 @@ type Service interface {
 	GetTransaction(input InputGetTransaction) ([]Transaction, error)
 	GetByUserID(userID int) ([]Transaction, error)
 	CreateTrans(input InputCreateTrans) (Transaction, error)
+	ProcessPayment(input TransactionNotif) error
 }
 
 func NewService(repository Repository, CampaignRepository campaign.Reprository, paymentService payment.Service) *service {
@@ -81,4 +83,44 @@ func (s *service) CreateTrans(input InputCreateTrans) (Transaction, error) {
 	}
 
 	return trans, nil
+}
+
+func (s *service) ProcessPayment(input TransactionNotif) error {
+	id, _ := strconv.Atoi(input.OrderID)
+
+	transaction, err := s.repository.GetByID(id)
+	if err != nil {
+		return err
+	}
+
+	if input.PaymentType == "credit_card" && input.TransactionStatus == "capture" && input.FraudStatus == "accept" {
+		transaction.Status = "paid"
+	} else if input.TransactionStatus == "settlement" {
+		transaction.Status = "paid"
+	} else if input.TransactionStatus == "deny" || input.TransactionStatus == "expire" || input.TransactionStatus == "cancel" {
+		transaction.Status = "cancel"
+	}
+
+	trans, err := s.repository.Update(transaction)
+	if err != nil {
+		return err
+	}
+
+	campaign, err := s.CampaignRepository.FindByID(trans.CampaignID)
+	if err != nil {
+		return err
+	}
+
+	if trans.Status == "paid" {
+		campaign.BackerCount = campaign.BackerCount + 1
+		campaign.CurrentAmount = campaign.CurrentAmount + trans.Amount
+
+		_, err := s.CampaignRepository.Update(campaign)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+
 }

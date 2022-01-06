@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-	dsn := "root:@tcp(127.0.0.1:3306)/go?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "doadmin:PO4a1Eo6i5xbJmJw@tcp(db-mysql-sgp1-47894-do-user-10563339-0.b.db.ondigitalocean.com:25060)/go?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -58,6 +58,7 @@ func main() {
 	api.GET("/campaigns/:id/transaction", authMiddleware(AuthService, UserService), transHandler.GetTransaction)
 	api.GET("/transaction", authMiddleware(AuthService, UserService), transHandler.GetTransactionByUser)
 	api.POST("/transaction", authMiddleware(AuthService, UserService), transHandler.CreateTrans)
+	api.POST("/transaction/notification", transHandler.GetNotif)
 	router.Run()
 }
 
