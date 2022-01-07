@@ -1,6 +1,8 @@
 package transaction
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type repository struct {
 	db *gorm.DB
@@ -11,7 +13,7 @@ type Repository interface {
 	GetByUserId(UserID int) ([]Transaction, error)
 	SaveTrans(transaction Transaction) (Transaction, error)
 	Update(transaction Transaction) (Transaction, error)
-	GetByID(Code int) (Transaction, error)
+	GetByID(Code string) (Transaction, error)
 }
 
 func NewRepository(db *gorm.DB) *repository {
@@ -29,7 +31,7 @@ func (r *repository) GetByCampaignID(CampaignID int) ([]Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) GetByID(Code int) (Transaction, error) {
+func (r *repository) GetByID(Code string) (Transaction, error) {
 	var transaction Transaction
 
 	err := r.db.Where("code = ?", Code).Find(&transaction).Error

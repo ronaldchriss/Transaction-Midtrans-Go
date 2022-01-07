@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-	dsn := "doadmin:PO4a1Eo6i5xbJmJw@tcp(db-mysql-sgp1-47894-do-user-10563339-0.b.db.ondigitalocean.com:25060)/go?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "golang:lTwiUyonc10rpuUK@tcp(db-mysql-sgp1-47894-do-user-10563339-0.b.db.ondigitalocean.com:25060)/go?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
