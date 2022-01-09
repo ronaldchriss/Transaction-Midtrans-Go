@@ -4,6 +4,7 @@ import (
 	"bwa_go/campaign"
 	"bwa_go/payment"
 	"errors"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -18,7 +19,7 @@ type Service interface {
 	GetTransaction(input InputGetTransaction) ([]Transaction, error)
 	GetByUserID(userID int) ([]Transaction, error)
 	CreateTrans(input InputCreateTrans) (Transaction, error)
-	ProcessPayment(input TransactionNotif) error
+	ProcessPayment(input TransactionNotificationInput) error
 }
 
 func NewService(repository Repository, CampaignRepository campaign.Reprository, paymentService payment.Service) *service {
@@ -84,8 +85,11 @@ func (s *service) CreateTrans(input InputCreateTrans) (Transaction, error) {
 	return trans, nil
 }
 
-func (s *service) ProcessPayment(input TransactionNotif) error {
-	id := input.ID
+func (s *service) ProcessPayment(input TransactionNotificationInput) error {
+	id, _ := strconv.Atoi(input.OrderID)
+	if input.PaymentType == "" {
+		return errors.New("ID Null")
+	}
 	transaction, err := s.repository.GetByID(id)
 	if err != nil {
 		return err
