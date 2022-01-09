@@ -48,6 +48,7 @@ func main() {
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
+	api.GET("/users/fetch", authMiddleware(AuthService, UserService), userHandler.FetchUser)
 	api.POST("/emailcheckers", userHandler.CheckEmail)
 	api.POST("/avatar", authMiddleware(AuthService, UserService), userHandler.UploadAvatar)
 
