@@ -15,6 +15,7 @@ type InputCreateTrans struct {
 
 type TransactionNotif struct {
 	TransactionStatus string `json: "transaction_status"`
+	ID                string `json: "id"`
 	OrderID           string `json: "order_id"`
 	PaymentType       string `json: "payment_type"`
 	FraudStatus       string `json: "fraud_status"`

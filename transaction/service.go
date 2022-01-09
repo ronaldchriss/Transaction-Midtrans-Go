@@ -85,7 +85,8 @@ func (s *service) CreateTrans(input InputCreateTrans) (Transaction, error) {
 }
 
 func (s *service) ProcessPayment(input TransactionNotif) error {
-	transaction, err := s.repository.GetByID(input.OrderID)
+	id := input.ID
+	transaction, err := s.repository.GetByID(id)
 	if err != nil {
 		return err
 	}
