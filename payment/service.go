@@ -2,7 +2,6 @@ package payment
 
 import (
 	"bwa_go/user"
-	"strconv"
 
 	"github.com/veritrans/go-midtrans"
 )
@@ -30,7 +29,7 @@ func (s *service) GetPaymentURL(transaction Transaction, user user.User) (string
 
 	chargeReq := &midtrans.SnapReq{
 		TransactionDetails: midtrans.TransactionDetails{
-			OrderID:  strconv.Itoa(transaction.ID),
+			OrderID:  transaction.Code,
 			GrossAmt: int64(transaction.Amount),
 		},
 		CustomerDetail: &midtrans.CustDetail{

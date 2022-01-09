@@ -13,7 +13,7 @@ type Repository interface {
 	GetByUserId(UserID int) ([]Transaction, error)
 	SaveTrans(transaction Transaction) (Transaction, error)
 	Update(transaction Transaction) (Transaction, error)
-	GetByID(ID int) (Transaction, error)
+	GetByID(ID string) (Transaction, error)
 }
 
 func NewRepository(db *gorm.DB) *repository {
@@ -31,10 +31,10 @@ func (r *repository) GetByCampaignID(CampaignID int) ([]Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) GetByID(ID int) (Transaction, error) {
+func (r *repository) GetByID(ID string) (Transaction, error) {
 	var transaction Transaction
 
-	err := r.db.Where("id = ?", ID).Find(&transaction).Error
+	err := r.db.Where("code = ?", ID).Find(&transaction).Error
 	if err != nil {
 		return transaction, err
 	}

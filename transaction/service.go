@@ -4,7 +4,6 @@ import (
 	"bwa_go/campaign"
 	"bwa_go/payment"
 	"errors"
-	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -86,11 +85,10 @@ func (s *service) CreateTrans(input InputCreateTrans) (Transaction, error) {
 }
 
 func (s *service) ProcessPayment(input TransactionNotificationInput) error {
-	id, _ := strconv.Atoi(input.OrderID)
 	if input.PaymentType == "" {
-		return errors.New("ID Null")
+		return errors.New("Notification Null")
 	}
-	transaction, err := s.repository.GetByID(id)
+	transaction, err := s.repository.GetByID(input.OrderID)
 	if err != nil {
 		return err
 	}
